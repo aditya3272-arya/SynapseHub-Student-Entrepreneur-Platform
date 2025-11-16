@@ -27,6 +27,8 @@ APPLICANT DETAILS:
 NEXT STEPS:
 To approve this application, click here: {approve_url}
 
+To view and manage all applications, visit: {base_url}/teams
+
 Best regards,
 The SynapseHub Team
 
@@ -103,6 +105,102 @@ Need help? Contact us at {Config.MAIL_USERNAME}
     except Exception as e:
         print(f"Failed to send booking confirmation email: {e}")
 
+def send_welcome_email(user_email, username):
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = Config.MAIL_USERNAME
+        msg['To'] = user_email
+        msg['Subject'] = "Welcome to SynapseHub - Let's Build Something Amazing!"
+        
+        body = f"""
+Dear {username},
+
+Welcome to SynapseHub - the premier platform for young entrepreneurs!
+
+We're thrilled to have you join our community of innovative minds who are passionate about creating solutions that matter.
+
+GET STARTED:
+• Submit your first business idea
+• Take our daily entrepreneurship quiz
+• Connect with mentors and fellow entrepreneurs
+• Join collaborative teams
+• Track your progress and achievements
+
+WHAT'S NEXT?
+1. Complete your profile to connect with like-minded peers
+2. Browse existing ideas for inspiration
+3. Submit your own innovative business concept
+4. Start your entrepreneurship learning journey
+
+NEED HELP?
+• Visit our Help Center: /helpcenter
+• Check out Safety Guidelines: /safety
+• Review Terms & Privacy: /terms
+
+We can't wait to see what amazing ideas you'll bring to life!
+
+Best regards,
+The SynapseHub Team
+
+---
+SynapseHub - Where Young Minds Build the Future
+Follow us for daily entrepreneurship tips and success stories!
+        """
+        
+        msg.attach(MIMEText(body, 'plain'))
+        
+        server = smtplib.SMTP(Config.MAIL_SERVER, Config.MAIL_PORT)
+        server.starttls()
+        server.login(Config.MAIL_USERNAME, Config.MAIL_PASSWORD)
+        server.send_message(msg)
+        server.quit()
+        
+        print(f"Welcome email sent to {user_email}")
+        
+    except Exception as e:
+        print(f"Failed to send welcome email: {e}")
+
+def send_password_reset_email(user_email, username, reset_token):
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = Config.MAIL_USERNAME
+        msg['To'] = user_email
+        msg['Subject'] = "Reset Your SynapseHub Password"
+        
+        base_url = "http://localhost:5000"  
+        reset_url = f"{base_url}/reset_password/{reset_token}"
+        
+        body = f"""
+Dear {username},
+
+We received a request to reset your SynapseHub password.
+
+To reset your password, click the link below:
+{reset_url}
+
+This link will expire in 1 hour for security reasons.
+
+If you didn't request this password reset, please ignore this email - your account is secure.
+
+Best regards,
+The SynapseHub Team
+
+---
+SynapseHub - Secure & Trusted Platform for Young Entrepreneurs
+        """
+        
+        msg.attach(MIMEText(body, 'plain'))
+        
+        server = smtplib.SMTP(Config.MAIL_SERVER, Config.MAIL_PORT)
+        server.starttls()
+        server.login(Config.MAIL_USERNAME, Config.MAIL_PASSWORD)
+        server.send_message(msg)
+        server.quit()
+        
+        print(f"Password reset email sent to {user_email}")
+        
+    except Exception as e:
+        print(f"Failed to send password reset email: {e}")
 
 def generate_meeting_link():
     meeting_id = str(uuid.uuid4())[:8]
