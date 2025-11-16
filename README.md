@@ -30,7 +30,7 @@ SynapseHub is a comprehensive web-based platform where student entrepreneurs can
 ### 🎯 Core Features
 
 ✅ **Global Idea Showcase** - Single-page design, infinite scroll, instant exploration  
-✅ **Smart Team Formation** - Algorithm matches students by complementary skills and interests  
+✅ **Team Formation** - Ideas list needed skills; users join by matching theirs. Simple discovery, easy collaboration.
 ✅ **AI-Powered Evaluation** - Instant feedback on feasibility, scalability, and market potential  
 ✅ **Expert Mentorship Network** - Direct connections to successful entrepreneurs and industry pros  
 ✅ **Daily Learning Hub** - Entrepreneurship quizzes, resources, and skill-building content  
@@ -103,17 +103,12 @@ SynapseHub is a comprehensive web-based platform where student entrepreneurs can
 
 ### Development Tools
 - Visual Studio Code
-- Git version control
 - Chrome DevTools
 
 ---
 
 ## ⚙️ Technical Highlights
 
-### Architecture
-- **MVC Pattern:** Clean separation of concerns
-- **RESTful Design:** Scalable API structure
-- **Modular Codebase:** Easy to maintain and extend
 
 ### Security
 - Password hashing (Werkzeug.security)
@@ -214,7 +209,7 @@ We're told to "innovate" and "think entrepreneurially," but given no tools to ac
 
 It's the platform I WISH existed when I started my journey. The infrastructure every student entrepreneur deserves.
 
-Over 30 hours of development went into creating not just functional code, but an empathy-driven experience designed by a student, for students.
+Over 24 hours of development went into creating not just functional code, but an empathy-driven experience designed by a student, for students.
 
 **This isn't just a project. It's infrastructure for the future.**
 
@@ -223,11 +218,9 @@ Over 30 hours of development went into creating not just functional code, but an
 ## 📦 Getting Started
 
 ### Prerequisites
-```bash
 - Python 3.8+
 - pip (Python package manager)
-- Git
-```
+
 
 ### Installation
 
