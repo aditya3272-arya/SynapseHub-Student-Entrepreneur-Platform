@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="static/css/profile.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/dashboard" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                <img src="/static/images/synapsehub_logo.png" alt="SynapseHub Logo" style="height: 40px; margin-right: 10px;">
+                 SynapseHub
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/ideas">Ideas</a></li>
+                <li><a href="/teams">Teams</a></li>
+                <li><a href="/mentors">Mentors</a></li>
+                <li><a href="/quiz">Daily Quiz</a></li>
+                <li><a href="/profile" class="active">Profile</a></li>
+            </ul>
+            <div class="dropdown user-profile">
+                <div class="profile-avatar">{{ session.username[0].upper() if session.username else 'U' }}</div>
+                <span>{{ session.username if session.username else 'User' }}</span>
+            
+                <div class="dropdown-content">
+                    <a href="/profile">Profile</a>
+                    <a href="/">Sign Out</a>
+                </div>
+            </div>
+    </nav>
+
+    <div class="container">
+        <div class="profile-header fade-in">
+            <button class="edit-profile-btn" onclick="openEditProfileModal()">✏️ Edit Profile</button>
+            <div class="profile-avatar-container">
+                <div class="profile-avatar-large" onclick="triggerFileInput()">
+                    {% if user and user[8] and user[8] != 'default-avatar.png' %}
+                        <img src="/static/uploads/{{ user[8] }}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                    {% else %}
+                        {{ session.username[0].upper() if session.username else 'U' }}
+                    {% endif %}
+                </div>
+                <div class="profile-pic-overlay" onclick="triggerFileInput()">📷</div>
+                <form id="profile-pic-form" style="display: none;">
+                    <input type="file" id="profile-pic-input" accept="image/*" onchange="uploadProfilePic()">
+                </form>
+            </div>
+            <h1>{{ user[1] if user else session.username if session.username else 'Your Name' }}</h1>
+            <p class="profile-subtitle">
+                Student Entrepreneur • {{ user[4] if user and user[4] else '16' }} years old
+                {% if user and user[2] %} • {{ user[2] }}{% endif %}
+            </p>
+            <div class="profile-stats">
+                <div class="header-stat">
+                    <div class="header-stat-number">{{ user_ideas|length if user_ideas else 0 }}</div>
+                    <div class="header-stat-label">Ideas Shared</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-number">{{ user[10] if user and user[10] else 0 }}</div>
+                    <div class="header-stat-label">Quiz Streak</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-number">{{ user[11] if user and user[11] else 0 }}</div>
+                    <div class="header-stat-label">Total Points</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quiz-analytics fade-in">
+            <h2 class="card-title">📊 Quiz Performance Analytics</h2>
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <div class="analytics-number" id="total-quizzes">{{ quiz_stats.total_quizzes if quiz_stats else 0 }}</div>
+                    <div class="analytics-label">Quizzes Taken</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-number" id="avg-accuracy">{{ quiz_stats.avg_accuracy if quiz_stats else 0 }}%</div>
+                    <div class="analytics-label">Average Accuracy</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-number" id="best-category">{{ quiz_stats.best_category if quiz_stats else 'N/A' }}</div>
+                    <div class="analytics-label">Best Category</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-number" id="improvement-rate">{{ quiz_stats.improvement_rate if quiz_stats else 0 }}%</div>
+                    <div class="analytics-label">Improvement Rate</div>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="profile-grid">
+            <div class="profile-card fade-in">
+                <h2 class="card-title">
+                    👤 Profile Information
+                    <button class="edit-section-btn" onclick="openEditProfileModal()">Edit</button>
+                </h2>
+                <div class="info-item">
+                    <div class="info-label">Username</div>
+                    <div class="info-value">{{ user[1] if user else session.username if session.username else 'Not set' }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Email</div>
+                    <div class="info-value">{{ user[2] if user else 'Not set' }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Age</div>
+                    <div class="info-value">{{ user[4] if user and user[4] else 'Not set' }} years old</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Skills</div>
+                    <div class="info-value">
+                        {% if user and user[5] %}
+                            <div class="skills-tags">
+                                {% for skill in user[5].split(',') %}
+                                    <span class="skill-tag">{{ skill.strip() }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <span class="empty-value">Add your skills to showcase your talents</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Interests</div>
+                    <div class="info-value">
+                        {{ user[6] if user and user[6] else 'Share what interests you!' }}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Bio</div>
+                    <div class="info-value">
+                        {{ user[7] if user and user[7] else 'Tell us about yourself and your entrepreneurial journey!' }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card fade-in">
+                <h2 class="card-title">📈 Progress Overview</h2>
+                <div class="info-item">
+                    <div class="info-label">Ideas Created</div>
+                    <div class="info-value">{{ user_ideas|length if user_ideas else 0 }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Quiz Accuracy</div>
+                    <div class="info-value">{{ quiz_stats.avg_accuracy if quiz_stats else 0 }}%</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Current Streak</div>
+                    <div class="info-value">{{ user[10] if user and user[10] else 0 }} days 🔥</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Total Points</div>
+                    <div class="info-value">{{ user[11] if user and user[11] else 0 }} ⭐</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Teams Joined</div>
+                    <div class="info-value">{{ teams_joined if teams_joined else 0 }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Member Since</div>
+                    <div class="info-value">{{ user[9].split(' ')[0] if user and user[9] else 'Recently' }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ideas-section fade-in">
+            <h2 class="card-title">
+                💡 My Ideas 
+                <a href="/submit_idea" class="edit-section-btn" style="text-decoration: none;">+ New Idea</a>
+            </h2>
+            {% if user_ideas %}
+                {% for idea in user_ideas %}
+                <div class="idea-item slide-in" style="animation-delay: {{ loop.index0 * 0.1 }}s;">
+                    <div class="idea-actions">
+                            <button class="idea-action-btn evaluate" onclick="evaluateIdea({{ idea[0] }}, '{{ idea[2] }}')" title="AI Evaluation">🤖</button>
+                        <button class="idea-action-btn delete" onclick="confirmDeleteIdea({{ idea[0] }}, '{{ idea[2] }}')" title="Delete Idea">🗑️</button>
+                    </div>
+                    <h3 class="idea-title">{{ idea[2] }}</h3>
+                    <div class="idea-meta">
+                        <span>📁 {{ idea[5] if idea[5] else 'General' }}</span>
+                        
+                    </div>
+                    <p class="idea-description">{{ idea[3][:150] }}{% if idea[3]|length > 150 %}...{% endif %}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; padding: 3rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">💡</div>
+                    <h3 style="color: #6b7280; margin-bottom: 1rem;">No ideas shared yet</h3>
+                    <p style="color: #9ca3af; margin-bottom: 1.5rem;">Share your first innovative startup idea with the community!</p>
+                    <a href="/submit_idea" class="btn">Share Your First Idea</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Edit Profile Information</h3>
+                <button class="modal-close" onclick="closeEditProfileModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-input" id="edit-username" 
+                               value="{{ user[1] if user else session.username if session.username else '' }}" 
+                               placeholder="Enter your username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="edit-email" 
+                               value="{{ user[2] if user else '' }}" 
+                               placeholder="your.email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Age</label>
+                        <input type="number" class="form-input" id="edit-age" 
+                               value="{{ user[4] if user and user[4] else '' }}" 
+                               placeholder="16" min="13" max="25">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Skills (comma-separated)</label>
+                        <input type="text" class="form-input" id="edit-skills" 
+                               value="{{ user[5] if user and user[5] else '' }}" 
+                               placeholder="Programming, Design, Marketing, Leadership">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Interests</label>
+                        <input type="text" class="form-input" id="edit-interests" 
+                               value="{{ user[6] if user and user[6] else '' }}" 
+                               placeholder="Technology, Entrepreneurship, Innovation">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bio</label>
+                        <textarea class="form-input form-textarea" id="edit-bio" 
+                                  placeholder="Tell us about yourself, your goals, and your entrepreneurial journey...">{{ user[7] if user and user[7] else '' }}</textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeEditProfileModal()">Cancel</button>
+                <button class="btn" onclick="saveProfile()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteConfirmModal" class="modal">
+        <div class="modal-content">
+            <div class="confirmation-dialog">
+                <div class="confirmation-icon">⚠️</div>
+                <h3 class="confirmation-title">Delete Idea</h3>
+                <p class="confirmation-message">
+                    Are you sure you want to delete "<span id="idea-to-delete-title"></span>"? 
+                    This action cannot be undone.
+                </p>
+                <div class="confirmation-actions">
+                    <button class="btn btn-secondary" onclick="closeDeleteConfirmModal()">Cancel</button>
+                    <button class="btn btn-danger" onclick="deleteIdea()" id="confirm-delete-btn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="message-container" style="position: fixed; top: 100px; right: 20px; z-index: 2000;"></div>
+
+    <div class="container">
+<div class="ideas-section fade-in">
+    <h2 class="card-title">
+        🤝 My Teams
+        <a href="/teams" class="edit-section-btn" style="text-decoration: none;">Explore Teams</a>
+    </h2>
+    {% if user_teams %}
+        <div class="teams-list">
+            {% for team in user_teams %}
+            <div class="team-item">
+                <div class="team-status active">Active</div>
+                <h4>{{ team.idea_title }}</h4>
+                <div class="team-meta">
+                    <span class="team-role">{{ team.role }}</span>
+                </div>
+                <div class="team-actions">
+                    <a href="/teams" class="btn-sm btn-primary-sm">View Team</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="teams-empty-state">
+            <div class="empty-icon">🤝</div>
+            <h3>Not part of any teams yet</h3>
+            <p>Join a team to collaborate on exciting startup ideas and projects!</p>
+            <a href="/teams" class="btn">Explore Teams</a>
+        </div>
+    {% endif %}
+</div>
+    </div>
+
+<div id="evaluationModal" class="evaluation-modal">
+    <div class="evaluation-modal-content">
+        <div class="evaluation-header">
+            <h3> AI Evaluation Results</h3>
+            <p id="evaluation-idea-title"></p>
+            <button class="modal-close" onclick="closeEvaluationModal()">×</button>
+        </div>
+        <div class="evaluation-body">
+            <div id="evaluation-content">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="static/js/profile.js"></script>
+</body>
+</html>

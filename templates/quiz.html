@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Quiz</title>
+    <link rel="stylesheet" href="static/css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/dashboard" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                <img src="/static/images/synapsehub_logo.png" alt="SynapseHub Logo" style="height: 40px; margin-right: 10px;">
+                 SynapseHub
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/ideas" class="active">Ideas</a></li>
+                <li><a href="/teams">Teams</a></li>
+                <li><a href="/mentors">Mentors</a></li>
+                <li><a href="/quiz">Daily Quiz</a></li>
+            </ul>
+            <div class="dropdown user-profile">
+                <div class="profile-avatar">{{ session.username[0].upper() if session.username else 'U' }}</div>
+                <span>{{ session.username if session.username else 'User' }}</span>
+            
+                <div class="dropdown-content">
+                    <a href="/profile">Profile</a>
+                    <a href="/">Sign Out</a>
+                </div>
+            </div>
+    </nav>
+
+
+    <div class="container">
+        <center>
+        <div class="quiz-header">
+            <h1>Daily Entrepreneur Quiz </h1>
+            <p>Master business concepts with 15 challenging questions every day!</p>
+            <div class="quiz-date" id="quiz-date"></div>
+        </div>
+        </center>
+
+
+        <div class="stats-dashboard fade-in">
+            <div class="stat-card streak-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-number">{{ user_stats[0] if user_stats and user_stats[0] else 0 }}</div>
+                <div class="stat-label">Day Streak</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-number">{{ user_stats[1] if user_stats and user_stats[1] else 0 }}</div>
+                <div class="stat-label">Total Points</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-number">{{ user_stats[2] if user_stats and user_stats[2] else 0 }}%</div>
+                <div class="stat-label">Accuracy</div>
+            </div>
+            
+        </div>
+
+        <div class="quiz-container fade-in" id="quiz-container">
+        </div>
+
+        <div class="results-container" id="results-container" style="display: none;">
+        </div>
+    </div>
+
+    <script src="static/js/quiz.js"></script>
+</body>
+</html>

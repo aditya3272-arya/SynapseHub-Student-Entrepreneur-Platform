@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teams - SynapseHub</title>
+    <link rel="stylesheet" href="static/css/teams.css">
+</head>
+<body data-current-user="{{ session.username if session.username else '' }}" >
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                <img src="/static/images/synapsehub_logo.png" alt="SynapseHub Logo" style="height: 40px; margin-right: 10px;">
+                SynapseHub
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/ideas">Ideas</a></li>
+                <li><a href="/teams" class="active">Teams</a></li>
+                <li><a href="/mentors">Mentors</a></li>
+                <li><a href="/quiz">Daily Quiz</a></li>
+            </ul>
+            <div class="dropdown user-profile">
+                <div class="profile-avatar">{{ session.username[0].upper() if session.username else 'U' }}</div>
+                <span>{{ session.username if session.username else 'User' }}</span>
+                <div class="dropdown-content">
+                    <a href="/profile">Profile</a>
+                    <a href="/">Sign Out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+      
+    <div class="container">
+        <div class="page-header">
+            <h1>Team Collaboration Hub </h1>
+            <p>Form teams, collaborate on ideas, and build amazing projects together</p>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('my-teams')">My Teams</button>
+            <button class="tab-btn" onclick="switchTab('available-ideas')">Available Ideas</button>
+            {% if session.get('user_type') == 'founder' %}
+            <button class="tab-btn" onclick="switchTab('manage-teams')">Manage Teams</button>
+            {% endif %}
+        </div>
+
+        <div id="my-teams" class="tab-content active">
+            {% if my_teams %}
+            <div class="teams-grid">
+                {% for team in my_teams %}
+                <div class="team-card">
+                    <div class="team-header">
+                        <h3 class="team-idea-title">{{ team.idea_title }}</h3>
+                        <div class="team-idea-category">{{ team.category }}</div>
+                        <p class="team-description">{{ team.description[:150] }}{% if team.description|length > 150 %}...{% endif %}</p>
+                        <div class="team-members">
+                            {% for member in team.members %}
+                            <div class="member-avatar {{ 'founder' if member.is_founder else '' }}" 
+                                 title="{{ member.username }}{{ ' (Founder)' if member.is_founder else '' }}">
+                                {{ member.username[0].upper() }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="team-actions">
+                        <button class="btn btn-primary" onclick="openTeamChat({{ team.team_id }}, '{{ team.idea_title }}')">
+                            💬 Open Chat
+                        </button>
+                        {% if team.is_member_founder %}
+                        <button class="btn btn-danger" onclick="confirmLeaveTeam({{ team.team_id }}, '{{ team.idea_title }}')">
+                            👋 Manage Team
+                        </button>
+                        {% else %}
+                        <button class="btn btn-danger" onclick="confirmLeaveTeam({{ team.team_id }}, '{{ team.idea_title }}')">
+                            🚪 Leave Team
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">👥</div>
+                <h3>No Teams Yet</h3>
+                <p>Apply to join teams from the "Available Ideas" tab to start collaborating!</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div id="available-ideas" class="tab-content">
+            {% if collaborative_ideas %}
+            <div class="teams-grid">
+                {% for idea in collaborative_ideas %}
+                <div class="team-card">
+                    <div class="team-header">
+                        <h3 class="team-idea-title">{{ idea.title }}</h3>
+                        <div class="team-idea-category">{{ idea.category }}</div>
+                        <p class="team-description"><strong>Problem:</strong> {{ idea.problem[:100] }}...</p>
+                        <p class="team-description"><strong>Solution:</strong> {{ idea.solution[:100] }}...</p>
+                        {% if idea.team_needs %}
+                        <p class="team-description"><strong>Looking for:</strong> {{ idea.team_needs }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="team-actions">
+                        <button class="btn btn-primary" onclick="showApplicationForm({{ idea.id }}, '{{ idea.title }}')">
+                            🤝 Apply to Join
+                        </button>
+                        <small style="color: #6b7280;">By {{ idea.author }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">💡</div>
+                <h3>No Ideas Available for Collaboration</h3>
+                <p>Check back later for new opportunities to join exciting projects!</p>
+            </div>
+            {% endif %}
+        </div>
+
+
+
+        {% if session.get('user_type') == 'founder' %}
+        <div id="manage-teams" class="tab-content">
+            <!-- Content for managing teams - pending applications, team member management -->
+            <h2 style="color: white; margin-bottom: 1.5rem;">Manage Your Ideas & Teams</h2>
+            <div id="founder-management-content">
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div id="applicationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Apply to Join Team</h2>
+                <button class="modal-close" onclick="closeApplicationModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="applicationForm" method="POST" action="/apply_to_team">
+                    <input type="hidden" id="idea_id" name="idea_id" value="">
+                    
+                    <div class="form-group">
+                        <label for="application-message">Why do you want to join this team?</label>
+                        <textarea id="application-message" name="message" class="form-input" 
+                                placeholder="Tell the founder about your skills, experience, and what you can contribute to their idea..."
+                                required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="skills">Your Skills & Expertise</label>
+                        <input type="text" id="skills" name="skills" class="form-input" 
+                               placeholder="e.g., Web Development, Marketing, Design, Business Strategy..."
+                               required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Relevant Experience</label>
+                        <textarea id="experience" name="experience" class="form-input"
+                                placeholder="Describe any relevant projects, internships, or experience you have..."
+                                required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="availability">Time Availability</label>
+                        <select id="availability" name="availability" class="form-input" required>
+                            <option value="">Select your availability</option>
+                            <option value="5-10 hours/week">5-10 hours per week</option>
+                            <option value="10-20 hours/week">10-20 hours per week</option>
+                            <option value="20+ hours/week">20+ hours per week</option>
+                            <option value="Full-time">Full-time commitment</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                        🚀 Submit Application
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="chatModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="chat-title">Team Chat</h2>
+                <button class="modal-close" onclick="closeChatModal()">×</button>
+            </div>
+            <div class="modal-body" style="padding: 0;">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <span id="chat-team-name">Team Discussion</span>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chat-input" 
+                               placeholder="Type your message..." onkeypress="handleChatKeyPress(event)">
+                        <button class="chat-send-btn" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ <script src="static/js/teams.js"></script>
+</body>
+</html>

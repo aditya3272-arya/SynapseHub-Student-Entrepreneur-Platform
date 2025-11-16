@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentors</title>
+    <link rel="stylesheet" href="static/css/mentors.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/dashboard" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                <img src="/static/images/synapsehub_logo.png" alt="SynapseHub Logo" style="height: 40px; margin-right: 10px;">
+                 SynapseHub
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/ideas">Ideas</a></li>
+                <li><a href="/teams">Teams</a></li>
+                <li><a href="/mentors" class="active">Mentors</a></li>
+                <li><a href="/quiz">Daily Quiz</a></li>
+            </ul>
+            <div class="dropdown user-profile">
+                <div class="profile-avatar">{{ session.username[0].upper() if session.username else 'U' }}</div>
+                <span>{{ session.username if session.username else 'User' }}</span>
+            
+                <div class="dropdown-content">
+                    <a href="/profile">Profile</a>
+                    <a href="/">Sign Out</a>
+                </div>
+            </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header fade-in">
+            <div class="page-header-content">
+                <h1>Expert Mentors </h1>
+                <p>Connect with successful entrepreneurs and industry leaders who are passionate about helping student startups thrive and succeed in their entrepreneurial journey</p>
+            </div>
+        </div>
+
+        <div class="filters-section fade-in">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="search">Search Mentors</label>
+                    <input type="text" id="search" class="filter-input" placeholder="Search by name or expertise...">
+                </div>
+                <div class="filter-group">
+                    <label for="expertise">Expertise</label>
+                    <select id="expertise" class="filter-input">
+                        <option value="">All Expertise</option>
+                        <option value="tech">Technology</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="finance">Finance</option>
+                        <option value="social">Social Impact</option>
+                    </select>
+                </div>
+                
+                <button class="btn" onclick="filterMentors()">Filter</button>
+            </div>
+        </div>
+
+        {% if mentors %}
+        <div class="mentors-grid">
+            {% for mentor in mentors %}
+            <div class="mentor-card fade-in">
+                <div class="mentor-header">
+                    <div class="mentor-avatar">{{ mentor[1][0] }}</div>
+                    <div class="mentor-info">
+                        <h3>{{ mentor[1] }}</h3>
+                        
+                        <div class="verified-badge">
+                            ✓ Verified Expert
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mentor-expertise">
+                    <h4>Expertise Areas</h4>
+                    <div class="expertise-tags">
+                        {% if mentor[2] %}
+                            {% for expertise in mentor[2].split(',') %}
+                                <span class="expertise-tag">{{ expertise.strip() }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="expertise-tag">General Business</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <p class="mentor-bio">{{ mentor[3] if mentor[3] else 'Experienced mentor passionate about helping student entrepreneurs succeed in their journey.' }}</p>
+
+                <div class="mentor-availability">
+                    <h4>Available Times</h4>
+                    <div class="availability-info">{{ mentor[4] if mentor[4] else 'Flexible scheduling available' }}</div>
+                </div>
+
+                
+
+                <div class="mentor-actions">
+                    <button class="btn btn-primary" onclick="openBookingModal('{{ mentor[1] }}', '{{ mentor[0] }}')">Book Session</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">🎓</div>
+            <h3>No mentors found</h3>
+            <p>Our expert mentors are being onboarded. Check back soon for amazing guidance!</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-mentor-name">Book Session with Mentor</h2>
+                <button class="modal-close" onclick="closeBookingModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="success-message" id="successMessage">
+                    <h3>🎉 Session Booked Successfully!</h3>
+                    <p>Check your email for meeting details and calendar invite.</p>
+                </div>
+
+                <form class="booking-form" id="bookingForm">
+                    <div class="form-group">
+                        <label for="student-name">Your Name</label>
+                        <input type="text" id="student-name" value="{{ session.username if session.username else '' }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="student-email">Email Address</label>
+                        <input type="email" id="student-email" placeholder="your.email@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="session-date">Preferred Date</label>
+                        <input type="date" id="session-date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Available Time Slots</label>
+                        <div class="time-slots" id="timeSlots">
+                            <div class="time-slot" data-time="10:00 AM">10:00 AM</div>
+                            <div class="time-slot" data-time="11:00 AM">11:00 AM</div>
+                            <div class="time-slot" data-time="2:00 PM">2:00 PM</div>
+                            <div class="time-slot" data-time="3:00 PM">3:00 PM</div>
+                            <div class="time-slot" data-time="4:00 PM">4:00 PM</div>
+                            <div class="time-slot unavailable" data-time="5:00 PM">5:00 PM (Booked)</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="session-topic">Session Topic/Goals</label>
+                        <textarea id="session-topic" rows="3" placeholder="What would you like to discuss? (e.g., business plan review, marketing strategy, funding advice)"></textarea>
+                    </div>
+
+                    <div class="booking-summary">
+                        <h4>Session Summary</h4>
+                        <p><strong>Mentor:</strong> <span id="summary-mentor">Mentor Name</span></p>
+                        <p><strong>Duration:</strong> 30 minutes</p>
+                        <p><strong>Date:</strong> <span id="summary-date">-</span></p>
+                        <p><strong>Time:</strong> <span id="summary-time">-</span></p>
+                        <p><strong>Meeting:</strong> Online (Google Meet link will be sent)</p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                        Confirm Booking 📅
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="static/js/mentors.js"></script>
+ 
+</body>
+</html>

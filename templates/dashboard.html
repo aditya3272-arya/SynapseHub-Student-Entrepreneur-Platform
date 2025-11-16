@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard </title>
+    <link rel="stylesheet" href="static/css/dashboard.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/dashboard" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                <img src="/static/images/synapsehub_logo.png" alt="SynapseHub Logo" style="height: 40px; margin-right: 10px;">
+                 SynapseHub
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/dashboard" class="active">Dashboard</a></li>
+                <li><a href="/ideas">Ideas</a></li>
+                <li><a href="/teams">Teams</a></li>
+                <li><a href="/mentors" >Mentors</a></li>
+                <li><a href="/quiz">Daily Quiz</a></li>
+            </ul>
+            <div class="dropdown user-profile">
+                <div class="profile-avatar">{{ session.username[0].upper() if session.username else 'U' }}</div>
+                <span>{{ session.username if session.username else 'User' }}</span>
+            
+                <div class="dropdown-content">
+                    <a href="/profile">Profile</a>
+                    <a href="/">Sign Out</a>
+                </div>
+            </div>
+            
+    </nav>
+
+    <div class="container">
+        <div class="welcome-section">
+            <h1>Welcome back, {{ session.username if session.username else 'Entrepreneur' }}! 🌟</h1>
+            <p>Ready to turn your ideas into reality? Let's make today count!</p>
+        </div>
+
+        <section class="quick-access">
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="quick-grid">
+                <a href="/ideas" class="quick-card">
+                    <div class="quick-card-icon">💡</div>
+                    <h3>Browse Ideas</h3>
+                    <p>Explore innovative startup ideas from students worldwide</p>
+                </a>
+                <a href="/submit_idea" class="quick-card">
+                    <div class="quick-card-icon">✨</div>
+                    <h3>Share Your Idea</h3>
+                    <p>Submit your startup concept and get feedback from peers</p>
+                </a>
+                <a href="/teams" class="quick-card">
+                    <div class="quick-card-icon">👥</div>
+                    <h3>Find Teammates</h3>
+                    <p>Connect with co-founders and build your dream team</p>
+                </a>
+                <a href="/mentors" class="quick-card">
+                    <div class="quick-card-icon">🎓</div>
+                    <h3>Get Mentorship</h3>
+                    <p>Learn from experienced entrepreneurs and industry experts</p>
+                </a>
+            </div>
+        </section>
+
+        <div class="dashboard-grid">
+            <div class="activity-feed">
+                <div class="activity-header">
+                    <h3>Recent Activity</h3>
+                    <a href="/ideas" class="btn btn-small">View All</a>
+                </div>
+                <div class="activity-list">
+                    {% if recent_ideas %}
+                        {% for idea in recent_ideas %}
+                        <div class="activity-item">
+                            <div class="activity-avatar">{{ idea[2][0].upper() }}</div>
+                            <div class="activity-content">
+                                <h4>{{ idea[2] }} shared a new idea</h4>
+                                <p>"{{ idea[0] }}"</p>
+                                <span class="activity-time">{{ idea[1] }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="activity-item">
+                            <div class="activity-avatar">🚀</div>
+                            <div class="activity-content">
+                                <h4>Welcome to Kidpreneur!</h4>
+                                <p>Start by browsing ideas or sharing your own startup concept</p>
+                                <span class="activity-time">Now</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="sidebar">
+                
+                <div class="sidebar-section">
+                    <h3>Your Progress</h3>
+                    <div class="progress-grid">
+                        <div class="progress-item">
+                            <div class="progress-number">{{ user_ideas_count }}</div>
+                            <div class="progress-label">Ideas Shared</div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-number">{{ user_stats[1] if user_stats else 0 }}</div>
+                            <div class="progress-label">Quiz Points</div>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+                <div class="sidebar-section">
+                    <h3>Trending This Week</h3>
+                    <div class="trending-item">
+                        <div class="trending-number">1</div>
+                        <div class="trending-content">
+                            <h4>EcoTrack - Carbon Footprint App</h4>
+                            <p>Environmental technology gaining momentum</p>
+                        </div>
+                    </div>
+                    <div class="trending-item">
+                        <div class="trending-number">2</div>
+                        <div class="trending-content">
+                            <h4>StudyBuddy - AI Homework Helper</h4>
+                            <p>EdTech solution with high engagement</p>
+                        </div>
+                    </div>
+                    <div class="trending-item">
+                        <div class="trending-number">3</div>
+                        <div class="trending-content">
+                            <h4>LocalTeen - Community Service Platform</h4>
+                            <p>Social impact project seeking team</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="welcome-section" style="background: linear-gradient(135deg, #10b981, #059669); margin-top: 2rem;">
+            <h2 style="font-size: 1.8rem;">Ready to Make an Impact?</h2>
+            <p style="margin-bottom: 1.5rem;">Join thousands of student entrepreneurs turning ideas into reality</p>
+            <div class="welcome-section-btn" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/submit_idea" class="btn" style="background: white; color: #059669;">Share Your Idea</a>
+                <a href="/mentors" class="btn" style="background: rgba(255, 255, 255, 0.2); border: 2px solid white;">Find a Mentor</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="feedback-section">
+    <h3>Help Us Improve SynapseHub</h3>
+    <p>Your feedback matters! Share your thoughts and help us build a better platform for student entrepreneurs.</p>
+    <button class="feedback-trigger-btn" onclick="openFeedbackModal()">
+        <span></span>
+        Share Feedback
+    </button>
+</div>
+
+<div id="feedbackModal" class="feedback-modal">
+    <div class="feedback-modal-content">
+        <div class="feedback-modal-header">
+            <h2>Share Your Feedback</h2>
+            <p>Help us make SynapseHub better for everyone!</p>
+            <button class="modal-close" onclick="closeFeedbackModal()">&times;</button>
+        </div>
+        
+        <form class="feedback-form" id="feedbackForm">
+            <div class="success-message" id="successMessage">
+                Thank you for your feedback! We appreciate your input.
+            </div>
+            
+            <div class="form-group">
+                <label for="userName">Name *</label>
+                <input type="text" id="userName" name="name" class="form-input" required 
+                       value="{{ session.username if session.username else '' }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="userEmail">Email *</label>
+                <input type="email" id="userEmail" name="email" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Overall Experience *</label>
+                <div class="rating-group">
+                    <button type="button" class="rating-star" data-rating="1">★</button>
+                    <button type="button" class="rating-star" data-rating="2">★</button>
+                    <button type="button" class="rating-star" data-rating="3">★</button>
+                    <button type="button" class="rating-star" data-rating="4">★</button>
+                    <button type="button" class="rating-star" data-rating="5">★</button>
+                </div>
+                <input type="hidden" id="rating" name="rating" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Feedback Category</label>
+                <div class="category-tags">
+                    <button type="button" class="category-tag" data-category="User Interface">User Interface</button>
+                    <button type="button" class="category-tag" data-category="Features">Features</button>
+                    <button type="button" class="category-tag" data-category="Performance">Performance</button>
+                    <button type="button" class="category-tag" data-category="Content">Content</button>
+                    <button type="button" class="category-tag" data-category="Bug Report">Bug Report</button>
+                    <button type="button" class="category-tag" data-category="Suggestion">Suggestion</button>
+                </div>
+                <input type="hidden" id="category" name="category">
+            </div>
+            
+            <div class="form-group">
+                <label for="feedbackMessage">Your Feedback *</label>
+                <textarea id="feedbackMessage" name="message" class="form-input form-textarea" 
+                          placeholder="Tell us about your experience, suggestions, or report any issues..." required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="improvements">What would you like to see improved?</label>
+                <textarea id="improvements" name="improvements" class="form-input form-textarea" 
+                          placeholder="Any specific improvements or new features you'd like to see..."></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="closeFeedbackModal()">Cancel</button>
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    <span class="loading-spinner" id="loadingSpinner"></span>
+                    Submit Feedback
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+ 
+ <script src="static/js/dashboard.js"></script>
+
+
+</body>
+</html>

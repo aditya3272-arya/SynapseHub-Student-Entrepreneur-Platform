@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ideas Hub</title>
+    <link rel="stylesheet" href="static/css/ideas.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/dashboard" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                <img src="/static/images/synapsehub_logo.png" alt="SynapseHub Logo" style="height: 40px; margin-right: 10px;">
+                 SynapseHub
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/ideas" class="active">Ideas</a></li>
+                <li><a href="/teams">Teams</a></li>
+                <li><a href="/mentors">Mentors</a></li>
+                <li><a href="/quiz">Daily Quiz</a></li>
+            </ul>
+            <div class="dropdown user-profile">
+                <div class="profile-avatar">{{ session.username[0].upper() if session.username else 'U' }}</div>
+                <span>{{ session.username if session.username else 'User' }}</span>
+            
+                <div class="dropdown-content">
+                    <a href="/profile">Profile</a>
+                    <a href="/">Sign Out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header fade-in">
+            <h1>Student Innovation Hub</h1>
+            <p>Discover groundbreaking ideas from young entrepreneurs worldwide and connect with the next generation of innovators</p>
+            <a href="/submit_idea" class="submit-cta pulse">Share Your Innovation</a>
+        </div>
+
+        <div class="filters-section fade-in">
+            <form method="GET" action="/ideas">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="search">Search Ideas</label>
+                        <input type="text" id="search" name="search" class="filter-input"
+                               placeholder="Search by title, problem, solution, or tags..."
+                               value="{{ current_search if current_search }}">
+                    </div>
+                    <div class="filter-group">
+                        <label for="category">Category</label>
+                        <select id="category" name="category" class="filter-input">
+                            <option value="">All Categories</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat }}" {{ 'selected' if cat == current_category }}>{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="sort">Sort By</label>
+                        <select id="sort" name="sort" class="filter-input">
+                            <option value="newest" {{ 'selected' if current_sort == 'newest' }}>Newest First</option>
+                            <option value="popular" {{ 'selected' if current_sort == 'popular' }}>Most Popular</option>
+                            <option value="views" {{ 'selected' if current_sort == 'views' }}>Most Viewed</option>
+                            <option value="comments" {{ 'selected' if current_sort == 'comments' }}>Most Discussed</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Apply Filters</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="results-info fade-in">
+            <div class="results-count">
+                <strong>{{ ideas|length }}</strong> innovative ideas found
+                {% if current_search or current_category %}
+                {% if current_search %}for "<em>{{ current_search }}</em>"{% endif %}
+                {% if current_category %}in <em>{{ current_category }}</em>{% endif %}
+                <a href="/ideas" style="color: rgba(255,255,255,0.8); margin-left: 1rem; text-decoration: underline;">Clear filters</a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if ideas %}
+        <div class="ideas-grid" id="ideasGrid">
+            {% for idea in ideas %}
+            <div class="idea-card fade-in" data-idea-id="{{ idea[0] }}">
+                <div class="idea-header">
+                    <div class="idea-badges">
+                        <div class="idea-category">{{ idea[4] if idea[4] else 'General' }}</div>
+                        <div class="idea-stage">{{ idea[9] if idea[9] else 'Idea' }}</div>
+                    </div>
+                    <h3 class="idea-title">{{ idea[1] }}</h3>
+                    <p class="idea-problem"><strong>Problem:</strong> {{ idea[2][:180] }}{% if idea[2]|length > 180 %}...{% endif %}</p>
+                    <p class="idea-solution"><strong>Solution:</strong> {{ idea[3][:150] }}{% if idea[3]|length > 150 %}...{% endif %}</p>
+                    {% if idea[13] %}
+                    <div class="idea-tags">
+                        {% for tag in idea[13].split(',')[:4] %}
+                        <span class="idea-tag">#{{ tag.strip() }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="idea-footer">
+                    <div class="idea-author">
+                        <div class="author-avatar">{{ idea[8][0].upper() }}</div>
+                        <div class="author-info">
+                            <h4>{{ idea[8] }}</h4>
+                            <p>{{ idea[5] }}</p>
+                        </div>
+                    </div>
+                    <div class="idea-stats">
+                        <button class="like-button" id="like-btn-{{ idea[0] }}" data-liked="false">
+                            <span class="heart">🤍</span> <span id="like-count-{{ idea[0] }}">{{ idea[7] if idea[7] is not none else 0 }}</span>
+                        </button>
+                        <button class="comment-button">
+                            💬 <span id="comment-count-{{ idea[0] }}">{{ idea[14] if idea[14] is not none else 0 }}</span>
+                        </button>
+                        <div class="stat-item">
+                            👁️ {{ idea[6] if idea[6] is not none else 0 }}
+                        </div>
+                        {% if idea[17] == 1 and idea[8] != session.username %}
+                        <a href="/teams?apply={{ idea[0] }}" class="btn btn-primary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;" onclick="event.stopPropagation();">
+                            🤝 Collaborate
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <h3>No ideas found</h3>
+            {% if current_search or current_category %}
+            <p>Try adjusting your search filters or <a href="/ideas" style="color: rgba(255,255,255,0.8); text-decoration: underline;">browse all ideas</a></p>
+            {% else %}
+            <p>Be the first to share an innovative startup idea!</p>
+            <a href="/submit_idea" class="btn" style="margin-top: 1rem;">Share Your Idea</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="/static/js/ideas.js"></script>
+</body>
+</html>

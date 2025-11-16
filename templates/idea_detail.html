@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idea Detail</title>
+    <link rel="stylesheet" href="/static/css/ideas.css">
+    <link rel="stylesheet" href="/static/css/idea_detail.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/dashboard" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                <img src="/static/images/synapsehub_logo.png" alt="SynapseHub Logo" style="height: 40px; margin-right: 10px;">
+                 SynapseHub
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/ideas" class="active">Ideas</a></li>
+                <li><a href="/teams">Teams</a></li>
+                <li><a href="/mentors">Mentors</a></li>
+                <li><a href="/quiz">Daily Quiz</a></li>
+            </ul>
+            <div class="dropdown user-profile">
+                <div class="profile-avatar">{{ session.username[0].upper() if session.username else 'U' }}</div>
+                <span>{{ session.username if session.username else 'User' }}</span>
+                <div class="dropdown-content">
+                    <a href="/profile">Profile</a>
+                    <a href="/">Sign Out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="detail-container">
+        <a href="/ideas" class="back-btn">← Back to Ideas</a>
+
+        <div class="detail-header">
+            <div class="detail-badges">
+                <div class="idea-category">{{ idea.category if idea.category else 'General' }}</div>
+                <div class="idea-stage">{{ idea.development_stage if idea.development_stage else 'Idea' }}</div>
+                {% if idea.open_collaboration == 1 %}
+                <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+                    Open for Collaboration
+                </div>
+                {% endif %}
+            </div>
+            
+            <h1 class="detail-title">{{ idea.title }}</h1>
+            
+            <div class="detail-engagement">
+                <button class="engagement-btn like-btn" id="like-btn" onclick="toggleLike()">
+                    <span id="heart-icon">🤍</span>
+                    <span id="like-count">{{ idea.like_count if idea.like_count else 0 }}</span>
+                </button>
+                <button class="engagement-btn comment-btn" onclick="scrollToComments()">
+                    💬 <span id="comment-count">{{ comments|length }}</span>
+                </button>
+                <div class="stat-display">
+                    👁️ <span id="view-count">{{ idea.view_count if idea.view_count else 0 }}</span>
+                </div>
+                {% if idea.open_collaboration == 1 and idea.username != session.username %}
+                <a href="/teams?apply={{ idea.id }}" class="engagement-btn" style="background: #10b981; color: white; text-decoration: none;">
+                    🤝 Join Team
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="author-section">
+                <div class="author-avatar-large">{{ idea.username[0].upper() if idea.username else 'U' }}</div>
+                <div class="author-details">
+                    <h3>{{ idea.username if idea.username else 'Unknown' }}</h3>
+                    <p>Posted on {{ idea.created_date if idea.created_date else 'Unknown date' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h2 class="section-title">🎯 Problem Statement</h2>
+            <div class="section-content">{{ idea.problem_statement if idea.problem_statement else 'No problem statement provided.' }}</div>
+        </div>
+
+        <div class="detail-section">
+            <h2 class="section-title">💡 Proposed Solution</h2>
+            <div class="section-content">{{ idea.solution_description if idea.solution_description else 'No solution description provided.' }}</div>
+        </div>
+
+        {% if idea.target_market or idea.budget_range or idea.timeline %}
+        <div class="detail-section">
+            <h2 class="section-title">📋 Project Details</h2>
+            <div class="detail-grid">
+                {% if idea.target_market %}
+                <div class="detail-item">
+                    <strong>Target Market</strong>
+                    <span>{{ idea.target_market }}</span>
+                </div>
+                {% endif %}
+                {% if idea.budget_range %}
+                <div class="detail-item">
+                    <strong>Budget Range</strong>
+                    <span>{{ idea.budget_range }}</span>
+                </div>
+                {% endif %}
+                {% if idea.timeline %}
+                <div class="detail-item">
+                    <strong>Timeline</strong>
+                    <span>{{ idea.timeline }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if idea.team_needs %}
+        <div class="detail-section">
+            <h2 class="section-title">👥 Team & Collaboration</h2>
+            <div class="section-content">{{ idea.team_needs }}</div>
+        </div>
+        {% endif %}
+
+        {% if idea.inspiration %}
+        <div class="detail-section">
+            <h2 class="section-title">💭 Inspiration</h2>
+            <div class="section-content">{{ idea.inspiration }}</div>
+        </div>
+        {% endif %}
+
+        {% if idea.tags %}
+        <div class="detail-section">
+            <h2 class="section-title">🏷️ Tags</h2>
+            <div class="tags-container">
+                {% for tag in idea.tags.split(',') %}
+                <span class="idea-tag">#{{ tag.strip() }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="comments-section" id="comments-section">
+            <div class="comments-header">
+                <h2 class="section-title">💬 Comments</h2>
+                <span style="color: #6b7280; font-size: 0.9rem;">{{ comments|length }} comment{{ 's' if comments|length != 1 else '' }}</span>
+            </div>
+
+            <div class="comment-form">
+                <textarea class="comment-input" id="comment-text" placeholder="Share your thoughts, feedback, or questions about this idea..."></textarea>
+                <button class="comment-submit" onclick="submitComment()">Post Comment</button>
+            </div>
+
+            <div class="comments-list" id="comments-list">
+                {% if comments %}
+                    {% for comment in comments %}
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-avatar">{{ comment.username[0].upper() if comment.username else 'U' }}</div>
+                            <div class="comment-meta">
+                                <div class="comment-author">{{ comment.username if comment.username else 'Anonymous' }}</div>
+                                <div class="comment-date">{{ comment.created_date if comment.created_date else 'Unknown date' }}</div>
+                            </div>
+                        </div>
+                        <div class="comment-text">{{ comment.comment_text if comment.comment_text else '' }}</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="empty-comments">
+                    <div class="empty-comments-icon">💬</div>
+                    <h3>No comments yet</h3>
+                    <p>Be the first to share your thoughts about this idea!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+ <script src="/static/js/idea_detail.js"></script>
+</body>
+</html>

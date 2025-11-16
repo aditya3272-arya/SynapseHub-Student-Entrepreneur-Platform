@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SynpaseHub</title>
+    <link rel="stylesheet" href="static/css/landing.css">
+
+</head>
+<body>
+   
+<nav>
+    <div class="container">
+        <div class="nav-content">
+            <a href="/" class="logo" style="display: flex; align-items: center; text-decoration: none;">
+                <img src="/static/images/synapsehub_logo.png" alt="SynapseHub Logo" style="height: 40px; margin-right: 10px;">
+                 SynapseHub
+            </a>
+            <div class="nav-buttons">
+                <a href="#login" class="btn btn-secondary" onclick="showLoginModal()">Login</a>
+                <a href="#signup" class="btn btn-primary" onclick="showSignupModal()">Get Started</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Turn Your Ideas Into Reality</h1>
+                <p>Connect with student entrepreneurs worldwide, find your dream team, and build the future together</p>
+                <div class="hero-cta">
+                    <a href="#signup" class="btn btn-primary btn-large" onclick="showSignupModal()">Start Your Journey</a>
+                    <a href="#features" class="btn btn-secondary btn-large">Explore Features</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item animate-on-scroll">
+                    <div class="stat-number">1,500+</div>
+                    <div class="stat-label">Student Entrepreneurs</div>
+                </div>
+                <div class="stat-item animate-on-scroll">
+                    <div class="stat-number">800+</div>
+                    <div class="stat-label">Startup Ideas Shared</div>
+                </div>
+                <div class="stat-item animate-on-scroll">
+                    <div class="stat-number">300+</div>
+                    <div class="stat-label">Teams Formed</div>
+                </div>
+                <div class="stat-item animate-on-scroll">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Expert Mentors</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="problem" id="problems">
+        <div class="container">
+            <div class="problem-content animate-on-scroll">
+                <div class="problem-text">
+                    <h2>Every Student Entrepreneur Faces These Challenges</h2>
+                    <ul class="problem-list">
+                        <li>Great ideas but no teammates who share the vision</li>
+                        <li>Difficulty finding mentors who understand student life</li>
+                        <li>Limited knowledge about starting and running a business</li>
+                        <li>No platform to showcase ideas to the right audience</li>
+                        <li>Lack of structured learning for entrepreneurship</li>
+                    </ul>
+                    <p>Sound familiar? You're not alone. Thousands of student entrepreneurs struggle with the same issues.</p>
+                </div>
+                <div class="problem-visual animate-on-scroll">
+                        <img src="{{ url_for('static', filename='images/problem_img.png') }}" alt="Problem">
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="solution" id="features">
+        <div class="container">
+            <h2 class="animate-on-scroll">We Built The Platform You've Been Waiting For</h2>
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">💡</div>
+                    <h3>Idea Showcase</h3>
+                    <p>Share your startup ideas with a global community of student entrepreneurs and get instant feedback from peers who understand your vision.</p>
+                </div>
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">👥</div>
+                    <h3>Team Formation</h3>
+                    <p>Find co-founders and teammates based on complementary skills, shared interests, and compatible working styles.</p>
+                </div>
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">🎓</div>
+                    <h3>Expert Mentorship</h3>
+                    <p>Connect with successful entrepreneurs and industry experts who provide guidance specifically for student startups.</p>
+                </div>
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Daily Learning</h3>
+                    <p>Build entrepreneurial knowledge through daily quizzes covering everything from business basics to advanced strategy.</p>
+                </div>
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Evaluation</h3>
+                    <p>Evaluate your startup ideas with AI-driven feedback, ratings, business potential and market insights.</p>
+                </div>
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Global Community</h3>
+                    <p>Join a worldwide network of young entrepreneurs sharing experiences, challenges, and successes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="quiz-preview">
+        <div class="container">
+            <div class="quiz-container animate-on-scroll">
+                <h2>Test Your Entrepreneurial Knowledge</h2>
+                <p>Try a sample question from our daily quiz system</p>
+                <div class="quiz-card">
+                    <div class="quiz-question">
+                        What is the most important first step when starting a business?
+                    </div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectQuizOption(this)">Get funding from investors</div>
+                        <div class="quiz-option" onclick="selectQuizOption(this)">Validate your idea with potential customers</div>
+                        <div class="quiz-option" onclick="selectQuizOption(this)">Build a perfect product</div>
+                        <div class="quiz-option" onclick="selectQuizOption(this)">Create a detailed business plan</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="checkQuizAnswer()">Submit Answer</button>
+                    <div id="quiz-result" style="display: none; margin-top: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 8px;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials" id="success_stories">
+        <div class="container">
+            <h2 class="animate-on-scroll">What Student Entrepreneurs Are Saying</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card animate-on-scroll">
+                    <div class="testimonial-text">
+                        "I found my co-founder here and we're launching our app next month! The platform made it so easy to connect with someone who shared my vision."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">S</div>
+                        <div class="testimonial-info">
+                            <h4>Sarah Chen</h4>
+                            <p>16, EdTech Startup Founder</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card animate-on-scroll">
+                    <div class="testimonial-text">
+                        "The daily quizzes taught me more about business in 3 months than I learned in years of school. Plus the mentors are incredibly helpful!"
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">M</div>
+                        <div class="testimonial-info">
+                            <h4>Marcus Johnson</h4>
+                            <p>17, Sustainable Fashion Brand</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card animate-on-scroll">
+                    <div class="testimonial-text">
+                        "This platform gave me the confidence to turn my environmental project into a real startup. The community support is amazing."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">A</div>
+                        <div class="testimonial-info">
+                            <h4>Aisha Patel</h4>
+                            <p>15, Environmental Tech Startup</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">×</span>
+            <form method="POST" action="/login">
+                <h3>Welcome Back!</h3>
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" required>
+                </div>
+                <button type="submit" class="form-submit">Login</button>
+                <p style="text-align: center; margin-top: 1rem; color: #6b7280;">
+                    Don't have an account? <a href="#" onclick="closeModal('loginModal'); showSignupModal();" style="color: #2563eb;">Sign up here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('signupModal')">×</span>
+            <form method="POST" action="/register">
+                <h3>Start Your Journey</h3>
+                <div class="form-group">
+                    <label for="signup-username">Username</label>
+                    <input type="text" id="signup-username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-age">Age</label>
+                    <input type="number" id="signup-age" name="age" min="13" max="18" value="16" required>
+                </div>
+                <button type="submit" class="form-submit">Create Account</button>
+                <p style="text-align: center; margin-top: 1rem; color: #6b7280;">
+                    Already have an account? <a href="#" onclick="closeModal('signupModal'); showLoginModal();" style="color: #2563eb;">Login here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>SynapseHub</h3>
+                    <p>Empowering the next generation of entrepreneurs to turn their ideas into reality.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Platform</h3>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#problems">Problems Faced</a></li>
+                    
+                        <li><a href="#success_stories">Success Stories</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+<li><a href="{{ url_for('main.helpcenter') }}">Help Center</a></li>
+<li><a href="{{ url_for('main.safety') }}">Safety Guidelines</a></li>
+<li><a href="{{ url_for('main.privacy_policy') }}">Privacy Policy</a></li>
+<li><a href="{{ url_for('main.terms') }}">Terms of Service</a></li>
+
+                       
+                    </ul>
+                </div>
+                
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 SynapseHub</p>
+            </div>
+        </div>
+    </footer>
+    <script src="static/js/landing.js"></script>
+
+</body>
+</html>
