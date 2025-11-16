@@ -91,7 +91,7 @@ SynapseHub is a comprehensive web-based platform where student entrepreneurs can
 - Structured schema for users, ideas, teams, connections
 
 ### AI & Machine Learning
-- **Groq API** (High-performance inference)
+- **Groq API (High-performance inference)
 - **Model: Llama 3.3 70B Versatile**
 - Use cases: Feasibility analysis, market evaluation, innovation scoring, feedback generation
 - Chosen for: Open-source transparency, sub-2-second response time, cost efficiency
@@ -123,7 +123,7 @@ SynapseHub is a comprehensive web-based platform where student entrepreneurs can
 - Efficient caching strategy
 
 ### AI Integration
-# Groq-powered evaluation using Llama 3.3 70B
+ Groq-powered evaluation using Llama 3.3 70B
 
 **Why Llama 3.3 70B?**
 - 70B parameters = nuanced, constructive analysis
