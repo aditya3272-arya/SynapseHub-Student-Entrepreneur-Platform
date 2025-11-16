@@ -30,7 +30,7 @@ SynapseHub is a comprehensive web-based platform where student entrepreneurs can
 ### 🎯 Core Features
 
 ✅ **Global Idea Showcase** - Single-page design, infinite scroll, instant exploration  
-✅ **Team Formation** - Ideas list needed skills; users join by matching theirs. Simple discovery, easy collaboration.
+✅ **Team Formation** - Ideas list needed skills; users join by matching theirs. Simple discovery, easy collaboration
 ✅ **AI-Powered Evaluation** - Instant feedback on feasibility, scalability, and market potential  
 ✅ **Expert Mentorship Network** - Direct connections to successful entrepreneurs and industry pros  
 ✅ **Daily Learning Hub** - Entrepreneurship quizzes, resources, and skill-building content  
