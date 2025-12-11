@@ -1,8 +1,6 @@
 # 🚀 SynapseHub - Empowering Student Entrepreneurs
 
 **Built by:** Aditya Arya  
-**Competition:** Student Hackpad 2025  
-**Theme:** Tools that make student life better
 
 ---
 
@@ -210,7 +208,7 @@ We're told to "innovate" and "think entrepreneurially," but given no tools to ac
 
 It's the platform I WISH existed when I started my journey. The infrastructure every student entrepreneur deserves.
 
-Over 24 hours of development went into creating not just functional code, but an empathy-driven experience designed by a student, for students.
+Over 2 weeks of development went into creating not just functional code, but an empathy-driven experience designed by a student, for students.
 
 **This isn't just a project. It's infrastructure for the future.**
 
@@ -260,13 +258,13 @@ python app.py
 - Chosen for open-source transparency, performance, cost efficiency
 - NOT used for content generation or code writing
 
-**Clarification:** All architecture, coding, database structure, and feature implementation done manually. AI tools serve specific purposes only. Total development: 24-30 hours hands-on work.
+**Clarification:** All architecture, coding, database structure, and feature implementation done manually. AI tools serve specific purposes only. 
 
 ---
 
 ## 🙏 Acknowledgments
 
-Built with 24+ hours of dedication, fueled by the belief that every student deserves a platform to be heard.
+Built with 2 weeks of dedication, fueled by the belief that every student deserves a platform to be heard.
 
 To all the student entrepreneurs out there with ideas gathering dust: **This is for you.** 🚀
 
